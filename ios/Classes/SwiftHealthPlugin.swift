@@ -370,8 +370,8 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
   }
 
   results.enumerateStatistics(
-    from: startDate,
-    to: endDate,
+    from: dateFrom,
+    to: dateTo,
     with: { (result, stop) in
       let totalStepForADay = result.sumQuantity()?.doubleValue(for: HKUnit.count()) ?? 0
     }

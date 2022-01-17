@@ -391,19 +391,15 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     //     HKHealthStore().execute(query)
     // }
 
-    func getTotalStepsStatisticsInInterval(quantityType: HKQuantityType, start: TimeInterval, end: TimeInterval, duration: Int, unit: TimeUnit,
+    func getTotalStepsStatisticsInInterval(quantityType: HKQuantityType, start: TimeInterval, end: TimeInterval, duration: Int,
                               options: HKStatisticsOptions, initialResultsHandler: ((HKStatisticsCollectionQuery, HKStatisticsCollection?, Error?) -> Void)?) {
         var anchorComponents: DateComponents
         var interval = DateComponents()
-        switch unit {
-        case .days:
-            anchorComponents = Calendar.current.dateComponents([.day, .month, .year], from: Date())
-            anchorComponents.hour = 0
-            interval.day = duration
-        case .minutes:
-            anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
-            interval.minute = duration
-        }
+
+        anchorComponents = Calendar.current.dateComponents([.day, .month, .year], from: Date())
+        anchorComponents.hour = 0
+        interval.day = duration
+
         
         let anchorDate = Calendar.current.date(from: anchorComponents)!
         

@@ -361,7 +361,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
-            quantitySamplePredicate: predicate,
+            quantitySamplePredicate: nil,
             options: .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval) { query, queryResult, error in
 
             guard let queryResult = queryResult else {

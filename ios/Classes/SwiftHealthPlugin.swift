@@ -81,6 +81,11 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             getTotalStepsInInterval(call: call, result: result)
         }
 
+        /// Handle getTotalStepsStatisticsInInterval
+        else if (call.method.elementsEqual("getTotalStepsStatisticsInInterval")){
+            getTotalStepsStatisticsInInterval(call: call, result: result)
+        }
+
         /// Handle writeData
         else if (call.method.elementsEqual("writeData")){
             try! writeData(call: call, result: result)
@@ -311,6 +316,53 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let query = HKStatisticsQuery(quantityType: sampleType,
             quantitySamplePredicate: predicate,
             options: .cumulativeSum) { query, queryResult, error in
+
+            guard let queryResult = queryResult else {
+                let error = error! as NSError
+                print("Error getting total steps in interval \(error.localizedDescription)")
+                
+                DispatchQueue.main.async {
+                    result(nil)
+                }
+                return
+            }
+
+            var steps = 0.0
+
+            if let quantity = queryResult.sumQuantity() {
+                let unit = HKUnit.count()
+                steps = quantity.doubleValue(for: unit)
+            }
+
+            let totalSteps = Int(steps)
+            DispatchQueue.main.async {
+                result(totalSteps)
+            }
+        }
+
+        HKHealthStore().execute(query)
+    }
+
+    func getTotalStepsStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let arguments = call.arguments as? NSDictionary
+        let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
+        let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
+
+        var anchorComponents: DateComponents
+        var interval = DateComponents()
+        anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
+        interval.minute = duration
+        let anchorDate = Calendar.current.date(from: anchorComponents)!
+        // Convert dates from milliseconds to Date()
+        let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
+        let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
+
+        let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+        let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
+
+        let query = HKStatisticsCollectionQuery(quantityType: sampleType,
+            quantitySamplePredicate: predicate,
+            options: .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval) { query, queryResult, error in
 
             guard let queryResult = queryResult else {
                 let error = error! as NSError

@@ -1,6 +1,5 @@
 library health;
 
-//Changes
 import 'dart:async';
 import 'dart:io' show Platform;
 

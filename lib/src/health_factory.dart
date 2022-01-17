@@ -334,4 +334,19 @@ class HealthFactory {
     );
     return stepsCount;
   }
+
+  Future<int?> getTotalStepsStatisticsInInterval(
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    final args = <String, dynamic>{
+      'startDate': startDate.millisecondsSinceEpoch,
+      'endDate': endDate.millisecondsSinceEpoch
+    };
+    final stepsCount = await _channel.invokeMethod<int?>(
+      'getTotalStepsStatisticsInInterval',
+      args,
+    );
+    return stepsCount;
+  }
 }

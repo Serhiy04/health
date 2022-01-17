@@ -343,7 +343,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         HKHealthStore().execute(query)
     }
 
-    func getTotalStepsStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func getTotalStepsStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult, initialResultsHandler: ((HKStatisticsCollectionQuery, HKStatisticsCollection?, Error?) -> Void)?) {
         let arguments = call.arguments as? NSDictionary
         let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
         let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
@@ -363,6 +363,8 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
             quantitySamplePredicate: nil,
             options: .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
+
+        query.initialResultsHandler = initialResultsHandler
 
         HKHealthStore().execute(query)
     }

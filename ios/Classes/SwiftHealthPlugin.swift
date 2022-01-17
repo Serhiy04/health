@@ -358,7 +358,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
 
         let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
-        // let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
+        let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
             quantitySamplePredicate: nil,
@@ -373,15 +373,6 @@ var dic = [Int: Double]()
   results.enumerateStatistics(
     from: dateFrom,
     to: dateTo) { statistics, _ in
-                // if let sum = statistics.sumQuantity() {
-                //     let unit: HKUnit = sampleType.is(compatibleWith: HKUnit.count()) ? HKUnit.count() : HKUnit.meterUnit(with: .kilo)
-                //     let quantity = sum.doubleValue(for: unit)
-                    
-                //     let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
-                    
-                //     dic[timestamp] = quantity
-                    
-                // }
                 if let quantity = statistics.sumQuantity() {
                 let unit = HKUnit.count()
                 steps = quantity.doubleValue(for: unit)
@@ -397,29 +388,6 @@ var dic = [Int: Double]()
         HKHealthStore().execute(query)
     }
     
-
-    // func getTotalStepsStatisticsInInterval(quantityType: HKQuantityType, start: TimeInterval, end: TimeInterval, duration: Int,
-    //                           options: HKStatisticsOptions, initialResultsHandler: ((HKStatisticsCollectionQuery, HKStatisticsCollection?, Error?) -> Void)?) {
-    //     var anchorComponents: DateComponents
-    //     var interval = DateComponents()
-
-    //     anchorComponents = Calendar.current.dateComponents([.day, .month, .year], from: Date())
-    //     anchorComponents.hour = 0
-    //     interval.day = duration
-
-        
-    //     let anchorDate = Calendar.current.date(from: anchorComponents)!
-        
-    //     let query = HKStatisticsCollectionQuery(quantityType: quantityType,
-    //                                             quantitySamplePredicate: nil,
-    //                                             options: options,
-    //                                             anchorDate: anchorDate,
-    //                                             intervalComponents: interval)
-    //     query.initialResultsHandler = initialResultsHandler
-        
-    //     HKHealthStore().execute(query)
-    // }
-
     func unitLookUp(key: String) -> HKUnit {
         guard let unit = unitDict[key] else {
             return HKUnit.count()

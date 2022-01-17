@@ -83,7 +83,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         /// Handle getTotalStepsStatisticsInInterval
         else if (call.method.elementsEqual("getTotalStepsStatisticsInInterval")){
-            getTotalStepsStatisticsInInterval(call: call, result: result)
+            getTotalStepsStatisticsInInterval()
         }
 
         /// Handle writeData

@@ -382,7 +382,7 @@ var dic = [Int: Double]()
                 //     dic[timestamp] = quantity
                     
                 // }
-                if let quantity = results.sumQuantity() {
+                if let quantity = statistics.sumQuantity() {
                 let unit = HKUnit.count()
                 steps = quantity.doubleValue(for: unit)
             }

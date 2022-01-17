@@ -350,8 +350,16 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         var anchorComponents: DateComponents
         var interval = DateComponents()
+        // case .days:
+        //     anchorComponents = Calendar.current.dateComponents([.day, .month, .year], from: Date())
+        //     anchorComponents.hour = 0
+        //     interval.day = duration
+        // case .minutes:
+        //     anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
+        //     interval.minute = duration
+        // }
         anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
-        interval.day = 1
+        interval.minute = 1
         let anchorDate = Calendar.current.date(from: anchorComponents)!
         // Convert dates from milliseconds to Date()
         let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)

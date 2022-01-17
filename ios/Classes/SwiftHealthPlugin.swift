@@ -371,11 +371,17 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
   results.enumerateStatistics(
     from: dateFrom,
-    to: dateTo,
-    with: { (result, stop) in
-      let totalStepForADay = result.sumQuantity()?.doubleValue(for: HKUnit.count()) ?? 0
-    }
-  )
+    to: dateTo) { statistics, _ in
+                if let sum = statistics.sumQuantity() {
+                    let unit: HKUnit = quantityType.is(compatibleWith: HKUnit.count()) ? HKUnit.count() : HKUnit.meterUnit(with: .kilo)
+                    let quantity = sum.doubleValue(for: unit))
+                    
+                    let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
+                    
+                    dic[timestamp] = quantity
+                    
+                }
+            }
 }
 
         HKHealthStore().execute(query)

@@ -348,12 +348,12 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
         let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
 
-        var anchorComponents: DateComponents
-        var interval = DateComponents()
-        anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
-        var duration = endDate - startDate;
-        interval.minute = duration
-        let anchorDate = Calendar.current.date(from: anchorComponents)!
+        // var anchorComponents: DateComponents
+        // var interval = DateComponents()
+        // anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
+        // var duration = endDate - startDate;
+        // interval.minute = duration
+        // let anchorDate = Calendar.current.date(from: anchorComponents)!
         // Convert dates from milliseconds to Date()
         let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
         let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)

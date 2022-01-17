@@ -364,26 +364,19 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             quantitySamplePredicate: nil,
             options: .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
 
-        query.initialResultsHandler = { _, results, error in
-            guard let results = results else {
-                completion(nil, error)
-                return
-            }
-            
-            var dic = [Int: Double]()
-            results.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
-                if let sum = statistics.sumQuantity() {
-                    let unit: HKUnit = quantityType.is(compatibleWith: HKUnit.count()) ? HKUnit.count() : HKUnit.meterUnit(with: .kilo)
-                    let quantity = sum.doubleValue(for: unit)
-                    
-                    let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
-                    
-                    dic[timestamp] = quantity
-                    
-                }
-            }
-            completion(dic, nil)
-        }
+       query.initialResultsHandler = { query, results, error in
+  guard let results = results else {
+    return
+  }
+
+  results.enumerateStatistics(
+    from: startDate,
+    to: endDate,
+    with: { (result, stop) in
+      let totalStepForADay = result.sumQuantity()?.doubleValue(for: HKUnit.count()) ?? 0
+    }
+  )
+}
 
         HKHealthStore().execute(query)
     }

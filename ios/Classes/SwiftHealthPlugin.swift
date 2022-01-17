@@ -343,7 +343,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         HKHealthStore().execute(query)
     }
 
-    func getTotalStepsStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult, initialResultsHandler: ((HKStatisticsCollectionQuery, HKStatisticsCollection?, Error?) -> Void)?) {
+    func getTotalStepsStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let arguments = call.arguments as? NSDictionary
         let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
         let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
@@ -358,16 +358,36 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
 
         let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
-        let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
+        // let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
             quantitySamplePredicate: nil,
             options: .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
 
-        query.initialResultsHandler = initialResultsHandler
+        query.initialResultsHandler = { _, results, error in
+            guard let results = results else {
+                completion(nil, error)
+                return
+            }
+            
+            var dic = [Int: Double]()
+            results.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
+                if let sum = statistics.sumQuantity() {
+                    let unit: HKUnit = quantityType.is(compatibleWith: HKUnit.count()) ? HKUnit.count() : HKUnit.meterUnit(with: .kilo)
+                    let quantity = sum.doubleValue(for: unit)
+                    
+                    let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
+                    
+                    dic[timestamp] = quantity
+                    
+                }
+            }
+            completion(dic, nil)
+        }
 
         HKHealthStore().execute(query)
     }
+    
 
     // func getTotalStepsStatisticsInInterval(quantityType: HKQuantityType, start: TimeInterval, end: TimeInterval, duration: Int,
     //                           options: HKStatisticsOptions, initialResultsHandler: ((HKStatisticsCollectionQuery, HKStatisticsCollection?, Error?) -> Void)?) {

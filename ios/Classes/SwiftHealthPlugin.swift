@@ -351,6 +351,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         var anchorComponents: DateComponents
         var interval = DateComponents()
         anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
+        var duration = endDate - startDate;
         interval.minute = duration
         let anchorDate = Calendar.current.date(from: anchorComponents)!
         // Convert dates from milliseconds to Date()
@@ -362,7 +363,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
             quantitySamplePredicate: predicate,
-            options: .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval) { query, queryResult, error in
+            options: .cumulativeSum) { query, queryResult, error in
 
             guard let queryResult = queryResult else {
                 let error = error! as NSError

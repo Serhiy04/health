@@ -368,13 +368,13 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
   guard let results = results else {
     return
   }
-
+var dic = [Int: Double]()
   results.enumerateStatistics(
     from: dateFrom,
     to: dateTo) { statistics, _ in
                 if let sum = statistics.sumQuantity() {
-                    let unit: HKUnit = quantityType.is(compatibleWith: HKUnit.count()) ? HKUnit.count() : HKUnit.meterUnit(with: .kilo)
-                    let quantity = sum.doubleValue(for: unit))
+                    let unit: HKUnit = sampleType.is(compatibleWith: HKUnit.count()) ? HKUnit.count() : HKUnit.meterUnit(with: .kilo)
+                    let quantity = sum.doubleValue(for: unit)
                     
                     let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
                     

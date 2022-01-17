@@ -362,30 +362,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
             quantitySamplePredicate: nil,
-            options: .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval) { query, queryResult, error in
-
-            guard let queryResult = queryResult else {
-                let error = error! as NSError
-                print("Error getting total steps in interval \(error.localizedDescription)")
-                
-                DispatchQueue.main.async {
-                    result(nil)
-                }
-                return
-            }
-
-            var steps = 0.0
-
-            if let quantity = queryResult.sumQuantity() {
-                let unit = HKUnit.count()
-                steps = quantity.doubleValue(for: unit)
-            }
-
-            let totalSteps = Int(steps)
-            DispatchQueue.main.async {
-                result(totalSteps)
-            }
-        }
+            options: .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
 
         HKHealthStore().execute(query)
     }

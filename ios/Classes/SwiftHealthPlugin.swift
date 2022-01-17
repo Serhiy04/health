@@ -368,19 +368,29 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
   guard let results = results else {
     return
   }
+  var steps = 0.0
 var dic = [Int: Double]()
   results.enumerateStatistics(
     from: dateFrom,
     to: dateTo) { statistics, _ in
-                if let sum = statistics.sumQuantity() {
-                    let unit: HKUnit = sampleType.is(compatibleWith: HKUnit.count()) ? HKUnit.count() : HKUnit.meterUnit(with: .kilo)
-                    let quantity = sum.doubleValue(for: unit)
+                // if let sum = statistics.sumQuantity() {
+                //     let unit: HKUnit = sampleType.is(compatibleWith: HKUnit.count()) ? HKUnit.count() : HKUnit.meterUnit(with: .kilo)
+                //     let quantity = sum.doubleValue(for: unit)
                     
-                    let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
+                //     let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
                     
-                    dic[timestamp] = quantity
+                //     dic[timestamp] = quantity
                     
-                }
+                // }
+                if let quantity = queryResult.sumQuantity() {
+                let unit = HKUnit.count()
+                steps = quantity.doubleValue(for: unit)
+            }
+
+            let totalSteps = Int(steps)
+            DispatchQueue.main.async {
+                result(totalSteps)
+            }
             }
 }
 

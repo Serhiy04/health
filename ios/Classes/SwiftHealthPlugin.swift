@@ -423,7 +423,7 @@ let arguments = call.arguments as? NSDictionary
             to: dateTo) { statistics, _ in
                 if let quantity = statistics.sumQuantity() {
                 let unit = unitType
-                let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
+                let timestamp = Int(statistics.dateFrom.timeIntervalSince1970 * 1000)
                 steps = quantity.doubleValue(for: unit)
                 let totalSteps = Int(steps)
                 dic[timestamp] = totalSteps
@@ -431,8 +431,7 @@ let arguments = call.arguments as? NSDictionary
 
                 // let totalSteps = Int(steps)
                 DispatchQueue.main.async {
-                    // result(dic)
-                    result(dic.mapValues({ Int($0) }))
+                    result(dic)
                 }
             }
         }

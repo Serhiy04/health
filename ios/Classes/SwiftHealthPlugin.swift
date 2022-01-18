@@ -365,36 +365,36 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         // Convert dates from milliseconds to Date()
         let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
         let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
-
+        var sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
         switch type {
             case "steps": 
             if #available(iOS 12.2, *)
             {
-            let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!    
+            sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!    
             }
             
             case "heartRate": 
             if #available(iOS 12.2, *)
             {
-            let sampleType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
+            sampleType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
             }
             case "restingHeartRate": 
             if #available(iOS 12.2, *)
             {
-            let sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
+            sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
             }
             case "distanceWalkingRunning": 
             if #available(iOS 12.2, *)
             {
-            let sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+            sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
             }
             case "exerciseTime": 
             if #available(iOS 12.2, *)
             {
-            let sampleType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime)!
+            sampleType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime)!
             }
             default:
-            let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+            sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
         }
 
         // let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!

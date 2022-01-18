@@ -347,8 +347,10 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         if #available(iOS 12.0, *)
         {
 let arguments = call.arguments as? NSDictionary
-        let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
-        let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
+        // let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
+        // let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
+        let startDate = (arguments?["startDate"] as? Int) ?? 0
+        let endDate = (arguments?["endDate"] as? Int) ?? 0
         let type = (arguments?["type"] as? String) ?? "steps"
 
         var anchorComponents: DateComponents

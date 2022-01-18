@@ -365,8 +365,10 @@ let arguments = call.arguments as? NSDictionary
         interval.day = 1
         let anchorDate = Calendar.current.date(from: anchorComponents)!
         // Convert dates from milliseconds to Date()
-        let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
-        let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
+        // let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
+        // let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
+        let dateFrom = Date(timeIntervalSince1970: startDate)
+        let dateTo = Date(timeIntervalSince1970: endDate)
         var sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
         var unitType = HKUnit.count()
         switch type {

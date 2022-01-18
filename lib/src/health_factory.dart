@@ -359,7 +359,14 @@ class HealthFactory {
       args,
     );
     // return stepsCount;
-    return stepsCount?.cast<int, int>().map((int key, int value) {
+    SplayTreeMap? sorted;
+    if (stepsCount != null) {
+      sorted = SplayTreeMap.from(stepsCount,
+          (key1, key2) => stepsCount[key1].compareTo(stepsCount[key2]));
+      print(sorted);
+    }
+
+    return sorted?.cast<int, int>().map((int key, int value) {
       var dateTime = DateTime.fromMillisecondsSinceEpoch(key);
       dateTime = DateTime(dateTime.year, dateTime.month,
           dateTime.day); // remove hours, minutes, seconds

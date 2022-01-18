@@ -344,7 +344,7 @@ class HealthFactory {
   //   return MapEntry(dateTime, value);
   // });
 
-  Future<Map?> getTotalStepsStatisticsInInterval(
+  Future<Map<DateTime, int>?> getTotalStepsStatisticsInInterval(
     DateTime startDate,
     DateTime endDate,
     HealthSwiftDataType type,

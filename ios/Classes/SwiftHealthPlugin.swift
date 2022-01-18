@@ -347,10 +347,8 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         if #available(iOS 12.0, *)
         {
 let arguments = call.arguments as? NSDictionary
-        // let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
-        // let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
-        let startDate = (arguments?["startDate"] as? Int) ?? 0
-        let endDate = (arguments?["endDate"] as? Int) ?? 0
+        let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
+        let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
         let type = (arguments?["type"] as? String) ?? "steps"
 
         var anchorComponents: DateComponents
@@ -367,10 +365,8 @@ let arguments = call.arguments as? NSDictionary
         interval.day = 1
         let anchorDate = Calendar.current.date(from: anchorComponents)!
         // Convert dates from milliseconds to Date()
-        // let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
-        // let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
-        let dateFrom = Date(timeIntervalSince1970: startDate)
-        let dateTo = Date(timeIntervalSince1970: endDate)
+        let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
+        let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
         var sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
         var unitType = HKUnit.count()
         switch type {
@@ -430,12 +426,13 @@ let arguments = call.arguments as? NSDictionary
                 let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
                 steps = quantity.doubleValue(for: unit)
                 let totalSteps = Int(steps)
-                dic[timestamp] = steps == nil || steps == 0.0 ? 0 : totalSteps
+                dic[timestamp] = totalSteps
                 }
 
                 // let totalSteps = Int(steps)
                 DispatchQueue.main.async {
-                    result(dic)
+                    // result(dic)
+                    result(dic.mapValues({ Int($0) }))
                 }
             }
         }

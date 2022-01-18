@@ -367,7 +367,6 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
         var sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
         var unitType = HKUnit.count()
-        var option = .cumulativeSum
         switch type {
             case "steps": 
             if #available(iOS 12.2, *)
@@ -380,14 +379,12 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             {
             sampleType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
             unitType = HKUnit.init(from: "count/min")
-            option = .discreteMostRecent
             }
             case "restingHeartRate": 
             if #available(iOS 12.2, *)
             {
             sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
             unitType = HKUnit.init(from: "count/min")
-            option = .discreteMostRecent
             }
             case "distanceWalkingRunning": 
             if #available(iOS 12.2, *)
@@ -411,7 +408,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
             quantitySamplePredicate: predicate,
-            options: option, anchorDate: anchorDate, intervalComponents: interval)
+            options: type == restingHeartRate || type == heartRate ? .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
 
        query.initialResultsHandler = { query, results, error in
   guard let results = results else {

@@ -344,7 +344,9 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     }
     
     func getTotalStepsStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let arguments = call.arguments as? NSDictionary
+        if #available(iOS 12.0, *)
+        {
+let arguments = call.arguments as? NSDictionary
         let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
         let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
         let type = (arguments?["type"] as? String) ?? "steps"
@@ -408,31 +410,31 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
             quantitySamplePredicate: predicate,
-            options: type == "restingHeartRate" || type == "heartRate" ? if #available(iOS 12.0, *) .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
+            options: type == "restingHeartRate" || type == "heartRate" ? .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
 
-       query.initialResultsHandler = { query, results, error in
-  guard let results = results else {
-    return
-  }
-  var steps = 0.0
-var dic = [Int: Double]()
-  results.enumerateStatistics(
-    from: dateFrom,
-    to: dateTo) { statistics, _ in
+        query.initialResultsHandler = { query, results, error in
+        guard let results = results else {
+            return
+        }
+        var steps = 0.0
+        var dic = [Int: Double]()
+        results.enumerateStatistics(
+            from: dateFrom,
+            to: dateTo) { statistics, _ in
                 if let quantity = statistics.sumQuantity() {
                 let unit = unitType
                 steps = quantity.doubleValue(for: unit)
-            }
+                }
 
-            let totalSteps = Int(steps)
-            DispatchQueue.main.async {
-                result(totalSteps)
+                let totalSteps = Int(steps)
+                DispatchQueue.main.async {
+                    result(totalSteps)
+                }
             }
-            }
-}
-
+        }
         HKHealthStore().execute(query)
     }
+}
     
     func unitLookUp(key: String) -> HKUnit {
         guard let unit = unitDict[key] else {

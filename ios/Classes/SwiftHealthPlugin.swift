@@ -347,6 +347,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let arguments = call.arguments as? NSDictionary
         let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
         let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
+        let type = (arguments?["type"] as? String) ?? "steps"
 
         var anchorComponents: DateComponents
         var interval = DateComponents()
@@ -365,7 +366,22 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
         let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
 
-        let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+        switch type {
+            case "steps": 
+            let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+            case "heartRate": 
+            let sampleType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
+            case "restingHeartRate": 
+            let sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
+            case "distanceWalkingRunning": 
+            let sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+            case "exerciseTime": 
+            let sampleType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime)!
+            default:
+            let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+        }
+
+        // let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
         let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,

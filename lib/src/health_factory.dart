@@ -338,10 +338,12 @@ class HealthFactory {
   Future<int?> getTotalStepsStatisticsInInterval(
     DateTime startDate,
     DateTime endDate,
+    HealthSwiftDataType type,
   ) async {
     final args = <String, dynamic>{
       'startDate': startDate.millisecondsSinceEpoch,
-      'endDate': endDate.millisecondsSinceEpoch
+      'endDate': endDate.millisecondsSinceEpoch,
+      'type': type.name
     };
     final stepsCount = await _channel.invokeMethod<int?>(
       'getTotalStepsStatisticsInInterval',
@@ -349,4 +351,12 @@ class HealthFactory {
     );
     return stepsCount;
   }
+}
+
+enum HealthSwiftDataType {
+  steps,
+  heartRate,
+  restingHeartRate,
+  distanceWalkingRunning,
+  exerciseTime,
 }

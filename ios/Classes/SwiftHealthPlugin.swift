@@ -425,7 +425,7 @@ let arguments = call.arguments as? NSDictionary
                 let unit = unitType
                 let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
                 quantity = quantity.doubleValue(for: unit)
-                let totalSteps = Int(steps)
+                let totalSteps = Int(quantity)
                 dic[timestamp] = totalSteps
                 }
 

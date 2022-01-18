@@ -408,7 +408,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
             quantitySamplePredicate: predicate,
-            options: type == restingHeartRate || type == heartRate ? .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
+            options: type == "restingHeartRate" || type == "heartRate" ? .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
 
        query.initialResultsHandler = { query, results, error in
   guard let results = results else {

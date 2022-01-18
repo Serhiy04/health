@@ -342,7 +342,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         HKHealthStore().execute(query)
     }
-    @available(iOS 12.0, *)
+    
     func getTotalStepsStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let arguments = call.arguments as? NSDictionary
         let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
@@ -408,7 +408,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
             quantitySamplePredicate: predicate,
-            options: type == "restingHeartRate" || type == "heartRate" ? .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
+            options: type == "restingHeartRate" || type == "heartRate" ? if #available(iOS 12.0, *) .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
 
        query.initialResultsHandler = { query, results, error in
   guard let results = results else {

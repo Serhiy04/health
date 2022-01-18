@@ -409,7 +409,7 @@ let arguments = call.arguments as? NSDictionary
         let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
-            quantitySamplePredicate: predicate,
+            quantitySamplePredicate: nil,
             options: type == "restingHeartRate" || type == "heartRate" ? .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
 
         query.initialResultsHandler = { query, results, error in

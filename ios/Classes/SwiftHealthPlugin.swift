@@ -368,15 +368,31 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         switch type {
             case "steps": 
-            let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+            if #available(iOS 12.2, *)
+            {
+            let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!    
+            }
+            
             case "heartRate": 
+            if #available(iOS 12.2, *)
+            {
             let sampleType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
+            }
             case "restingHeartRate": 
+            if #available(iOS 12.2, *)
+            {
             let sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
+            }
             case "distanceWalkingRunning": 
+            if #available(iOS 12.2, *)
+            {
             let sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+            }
             case "exerciseTime": 
+            if #available(iOS 12.2, *)
+            {
             let sampleType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime)!
+            }
             default:
             let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
         }

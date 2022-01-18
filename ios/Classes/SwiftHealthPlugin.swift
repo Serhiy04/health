@@ -436,10 +436,13 @@ let arguments = call.arguments as? NSDictionary
                 }
 
                 // let totalSteps = Int(steps)
-                DispatchQueue.main.async {
+                // DispatchQueue.main.async {
+                //     result(dic)
+                // }
+            }
+            DispatchQueue.main.async {
                     result(dic)
                 }
-            }
         }
         HKHealthStore().execute(query)
     }

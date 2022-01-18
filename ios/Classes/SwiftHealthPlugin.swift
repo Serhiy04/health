@@ -416,15 +416,21 @@ let arguments = call.arguments as? NSDictionary
         guard let results = results else {
             return
         }
-        var steps = 0.0
+        
         var dic = [Int: Int]()
         results.enumerateStatistics(
             from: dateFrom,
             to: dateTo) { statistics, _ in
                 if let quantity = statistics.sumQuantity() {
                 let unit = unitType
-                let timestamp = Int(statistics.dateFrom.timeIntervalSince1970 * 1000)
-                steps = quantity.doubleValue(for: unit)
+                let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
+                var steps = quantity.doubleValue(for: unit)
+                let totalSteps = Int(steps)
+                dic[timestamp] = totalSteps
+                }
+                else {
+                let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
+                var steps = 0.0
                 let totalSteps = Int(steps)
                 dic[timestamp] = totalSteps
                 }

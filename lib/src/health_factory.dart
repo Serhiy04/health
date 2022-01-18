@@ -335,7 +335,16 @@ class HealthFactory {
     return stepsCount;
   }
 
-  Future<int?> getTotalStepsStatisticsInInterval(
+  // ture<Map<DateTime, int>> getStepsBySegment(int start, int end, int duration, TimeUnit unit) async {
+  //   Map stepsByTimestamp = await _channel
+  //       .invokeMethod("getStepsBySegment", {"start": start, "end": end, "duration": duration, "unit": unit.index});
+  // return stepsByTimestamp.cast<int, int>().map((int key, int value) {
+  //   var dateTime = DateTime.fromMillisecondsSinceEpoch(key);
+  //   dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day); // remove hours, minutes, seconds
+  //   return MapEntry(dateTime, value);
+  // });
+
+  Future<Map?> getTotalStepsStatisticsInInterval(
     DateTime startDate,
     DateTime endDate,
     HealthSwiftDataType type,
@@ -345,11 +354,17 @@ class HealthFactory {
       'endDate': endDate.millisecondsSinceEpoch,
       'type': type.name
     };
-    final stepsCount = await _channel.invokeMethod<int?>(
+    final stepsCount = await _channel.invokeMethod<Map?>(
       'getTotalStepsStatisticsInInterval',
       args,
     );
-    return stepsCount;
+    // return stepsCount;
+    return stepsCount?.cast<int, int>().map((int key, int value) {
+      var dateTime = DateTime.fromMillisecondsSinceEpoch(key);
+      dateTime = DateTime(dateTime.year, dateTime.month,
+          dateTime.day); // remove hours, minutes, seconds
+      return MapEntry(dateTime, value);
+    });
   }
 }
 

@@ -417,7 +417,7 @@ let arguments = call.arguments as? NSDictionary
             return
         }
         var steps = 0.0
-        var dic = [Int: Double]()
+        var dic = [Int: Int]()
         results.enumerateStatistics(
             from: dateFrom,
             to: dateTo) { statistics, _ in
@@ -425,8 +425,8 @@ let arguments = call.arguments as? NSDictionary
                 let unit = unitType
                 let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
                 steps = quantity.doubleValue(for: unit)
-                // let totalSteps = Int(steps)
-                dic[timestamp] = steps
+                let totalSteps = Int(steps)
+                dic[timestamp] = totalSteps
                 }
 
                 // let totalSteps = Int(steps)

@@ -342,7 +342,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         HKHealthStore().execute(query)
     }
-
+    @available(iOS 12.0, *)
     func getTotalStepsStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let arguments = call.arguments as? NSDictionary
         let startDate = (arguments?["startDate"] as? NSNumber) ?? 0

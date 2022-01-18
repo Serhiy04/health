@@ -366,11 +366,13 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
         let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
         var sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
+        var unitType = HKUnit.count()
         switch type {
             case "steps": 
             if #available(iOS 12.2, *)
             {
-            sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!    
+            sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
+            unitType = HKUnit.count()
             }
             
             case "heartRate": 
@@ -387,6 +389,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             if #available(iOS 12.2, *)
             {
             sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+            unitType = HKUnit.meter()
             }
             case "exerciseTime": 
             if #available(iOS 12.2, *)
@@ -414,7 +417,7 @@ var dic = [Int: Double]()
     from: dateFrom,
     to: dateTo) { statistics, _ in
                 if let quantity = statistics.sumQuantity() {
-                let unit = HKUnit.count()
+                let unit = unitType
                 steps = quantity.doubleValue(for: unit)
             }
 

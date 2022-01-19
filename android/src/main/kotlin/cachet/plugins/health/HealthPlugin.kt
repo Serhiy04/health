@@ -588,9 +588,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
                 aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
             }
         }
-// .addDataType(stepsDataType)
+// .addDataType(aggregatedDataType)
         val fitnessOptions = FitnessOptions.builder()
-            .addDataType(aggregatedDataType)
+            .addDataType(stepsDataType)
             .build()
         val gsa = GoogleSignIn.getAccountForExtension(activity, fitnessOptions)
 
@@ -611,7 +611,8 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
 
         Fitness.getHistoryClient(activity, gsa).readData(request)
             .addOnFailureListener(errHandler(result))
-            .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, aggregatedDataType, result))
+            .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, stepsDataType, result))
+            // .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, aggregatedDataType, result))
 
     }
 

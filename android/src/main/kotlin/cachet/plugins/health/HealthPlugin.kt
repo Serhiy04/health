@@ -603,11 +603,15 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
 
         val duration = (end - start).toInt()
 
+        // val request = DataReadRequest.Builder()
+        //     .aggregate(ds)
+        //     .bucketByTime(duration, TimeUnit.MILLISECONDS)
+        //     .setTimeRange(start, end, TimeUnit.MILLISECONDS)
+        //     .build()
         val request = DataReadRequest.Builder()
-            .aggregate(ds)
-            .bucketByTime(duration, TimeUnit.MILLISECONDS)
-            .setTimeRange(start, end, TimeUnit.MILLISECONDS)
-            .build()
+                .setTimeRange(start, end, TimeUnit.MILLISECONDS)
+                .read(stepsDataType)
+                .build()
 
         Fitness.getHistoryClient(activity, gsa).readData(request)
             .addOnFailureListener(errHandler(result))

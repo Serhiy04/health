@@ -86,6 +86,11 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             getTotalDataStatisticsInInterval(call: call, result: result)
         }
 
+        /// Handle getTotalDataStatisticsByDateSegments
+        else if (call.method.elementsEqual("getTotalDataStatisticsByDateSegments")){
+            getTotalDataStatisticsByDateSegments(call: call, result: result)
+        }
+
         /// Handle writeData
         else if (call.method.elementsEqual("writeData")){
             try! writeData(call: call, result: result)
@@ -343,7 +348,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         HKHealthStore().execute(query)
     }
     
-    func getTotalDataStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func getTotalDataStatisticsByDateSegments(call: FlutterMethodCall, result: @escaping FlutterResult) {
         if #available(iOS 12.0, *)
         {
         let arguments = call.arguments as? NSDictionary
@@ -447,6 +452,106 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         HKHealthStore().execute(query)
     }
 }
+
+    func getTotalDataStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult) {   
+        if #available(iOS 12.0, *)
+        {
+        let arguments = call.arguments as? NSDictionary
+        let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
+        let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
+        let type = (arguments?["type"] as? String) ?? "steps"
+
+        var anchorComponents: DateComponents
+        var interval = DateComponents()
+        // case .days:
+            anchorComponents = Calendar.current.dateComponents([.day, .month, .year], from: Date())
+            anchorComponents.hour = 0
+        //     interval.day = duration
+        // case .minutes:
+        //     anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
+        //     interval.minute = duration
+        // }
+        // anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
+        interval.day = 1
+        let anchorDate = Calendar.current.date(from: anchorComponents)!
+        // Convert dates from milliseconds to Date()
+        let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
+        let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
+        var sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
+        var unitType = HKUnit.count()
+        switch type {
+            case "steps": 
+            if #available(iOS 12.2, *)
+            {
+            sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
+            unitType = HKUnit.count()
+            }   
+            case "heartRate": 
+            if #available(iOS 12.2, *)
+            {
+            sampleType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
+            unitType = HKUnit.init(from: "count/min")
+            }
+            case "restingHeartRate": 
+            if #available(iOS 12.2, *)
+            {
+            sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
+            unitType = HKUnit.init(from: "count/min")
+            }
+            case "distanceWalkingRunning": 
+            if #available(iOS 12.2, *)
+            {
+            sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
+            unitType = HKUnit.meter()
+            }
+            case "exerciseTime": 
+            if #available(iOS 12.2, *)
+            {
+            sampleType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime)!
+            unitType = HKUnit.minute()
+            }
+            default:
+            sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+            unitType = HKUnit.count()
+        }
+
+        // let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
+        let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
+
+        let query = HKStatisticsCollectionQuery(quantityType: sampleType,
+            quantitySamplePredicate: predicate,
+            options: type == "restingHeartRate" || type == "heartRate" ? .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
+
+        query.initialResultsHandler = { query, results, error in
+        guard let results = results else {
+            return
+        }
+        
+        var quantity = 0.0
+        results.enumerateStatistics(
+            from: dateFrom,
+            to: dateTo) { statistics, _ in
+                if let sumQuantity = statistics.sumQuantity() {
+                let unit = unitType
+                var data = sumQuantity.doubleValue(for: unit)
+                quantity += data
+                }
+                else {
+                quantity += 0.0
+                }
+
+                // let totalSteps = Int(steps)
+                // DispatchQueue.main.async {
+                //     result(dic)
+                // }
+            }
+            let totalQuantity = Int(quantity)
+            DispatchQueue.main.async {
+                    result(totalQuantity)
+                }
+        }
+        HKHealthStore().execute(query)
+    }
     
     func unitLookUp(key: String) -> HKUnit {
         guard let unit = unitDict[key] else {
@@ -550,110 +655,3 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         allDataTypes = Set(heartRateEventTypes + healthDataTypes)
     }
 }
-
-
-
-
-// func getTotalDataStatisticsByDateSegments(call: FlutterMethodCall, result: @escaping FlutterResult) {
-//         if #available(iOS 12.0, *)
-//         {
-//         let arguments = call.arguments as? NSDictionary
-//         let startDate = (arguments?["startDate"] as? NSNumber) ?? 0
-//         let endDate = (arguments?["endDate"] as? NSNumber) ?? 0
-//         let type = (arguments?["type"] as? String) ?? "steps"
-
-//         var anchorComponents: DateComponents
-//         var interval = DateComponents()
-//         // case .days:
-//             anchorComponents = Calendar.current.dateComponents([.day, .month, .year], from: Date())
-//             anchorComponents.hour = 0
-//         //     interval.day = duration
-//         // case .minutes:
-//         //     anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
-//         //     interval.minute = duration
-//         // }
-//         // anchorComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .second], from: Date())
-//         interval.day = 1
-//         let anchorDate = Calendar.current.date(from: anchorComponents)!
-//         // Convert dates from milliseconds to Date()
-//         let dateFrom = Date(timeIntervalSince1970: startDate.doubleValue / 1000)
-//         let dateTo = Date(timeIntervalSince1970: endDate.doubleValue / 1000)
-//         var sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
-//         var unitType = HKUnit.count()
-//         switch type {
-//             case "steps": 
-//             if #available(iOS 12.2, *)
-//             {
-//             sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
-//             unitType = HKUnit.count()
-//             }   
-//             case "heartRate": 
-//             if #available(iOS 12.2, *)
-//             {
-//             sampleType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
-//             unitType = HKUnit.init(from: "count/min")
-//             }
-//             case "restingHeartRate": 
-//             if #available(iOS 12.2, *)
-//             {
-//             sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
-//             unitType = HKUnit.init(from: "count/min")
-//             }
-//             case "distanceWalkingRunning": 
-//             if #available(iOS 12.2, *)
-//             {
-//             sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
-//             unitType = HKUnit.meter()
-//             }
-//             case "exerciseTime": 
-//             if #available(iOS 12.2, *)
-//             {
-//             sampleType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime)!
-//             unitType = HKUnit.minute()
-//             }
-//             default:
-//             sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
-//             unitType = HKUnit.count()
-//         }
-
-//         // let sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
-//         let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
-
-//         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
-//             quantitySamplePredicate: nil,
-//             options: type == "restingHeartRate" || type == "heartRate" ? .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
-
-//         query.initialResultsHandler = { query, results, error in
-//         guard let results = results else {
-//             return
-//         }
-        
-//         var dic = [Int: Int]()
-//         results.enumerateStatistics(
-//             from: dateFrom,
-//             to: dateTo) { statistics, _ in
-//                 if let quantity = statistics.sumQuantity() {
-//                 let unit = unitType
-//                 let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
-//                 var steps = quantity.doubleValue(for: unit)
-//                 let totalSteps = Int(steps)
-//                 dic[timestamp] = totalSteps
-//                 }
-//                 else {
-//                 let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
-//                 var steps = 0.0
-//                 let totalSteps = Int(steps)
-//                 dic[timestamp] = totalSteps
-//                 }
-
-//                 // let totalSteps = Int(steps)
-//                 // DispatchQueue.main.async {
-//                 //     result(dic)
-//                 // }
-//             }
-//             DispatchQueue.main.async {
-//                     result(dic)
-//                 }
-//         }
-//         HKHealthStore().execute(query)
-//     }

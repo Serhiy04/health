@@ -558,64 +558,64 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
 
     }
 
-    private fun getTotalDataStatisticsInInterval(call: MethodCall, result: Result) {
-        val start = call.argument<Long>("startDate")!!
-        val end = call.argument<Long>("endDate")!!
-        val type = call.argument<String>("type")!!
+    // private fun getTotalDataStatisticsInInterval(call: MethodCall, result: Result) {
+    //     val start = call.argument<Long>("startDate")!!
+    //     val end = call.argument<Long>("endDate")!!
+    //     val type = call.argument<String>("type")!!
 
-        val activity = activity ?: return
+    //     val activity = activity ?: return
 
-        var stepsDataType = keyToHealthDataType(STEPS)
-        var aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
-        when(type){
-            "steps" -> {
-                stepsDataType = keyToHealthDataType(STEPS)
-                aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
-            }
-            "heartRate" -> {
-                stepsDataType = keyToHealthDataType(HEART_RATE)
-                aggregatedDataType = keyToHealthDataType(HEART_RATE)
-            }
-            "distance" -> {
-                stepsDataType = keyToHealthDataType(DISTANCE_DELTA)
-                aggregatedDataType = keyToHealthDataType(AGGREGATE_DISTANCE_DELTA)
-            }
-            "moveMinutes" -> {
-                stepsDataType = keyToHealthDataType(MOVE_MINUTES)
-                aggregatedDataType = keyToHealthDataType(MOVE_MINUTES)
-            }
-            else -> {
-                stepsDataType = keyToHealthDataType(STEPS)
-                aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
-            }
-        }
+    //     var stepsDataType = keyToHealthDataType(STEPS)
+    //     var aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
+    //     when(type){
+    //         "steps" -> {
+    //             stepsDataType = keyToHealthDataType(STEPS)
+    //             aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
+    //         }
+    //         "heartRate" -> {
+    //             stepsDataType = keyToHealthDataType(HEART_RATE)
+    //             aggregatedDataType = keyToHealthDataType(HEART_RATE)
+    //         }
+    //         "distance" -> {
+    //             stepsDataType = keyToHealthDataType(DISTANCE_DELTA)
+    //             aggregatedDataType = keyToHealthDataType(AGGREGATE_DISTANCE_DELTA)
+    //         }
+    //         "moveMinutes" -> {
+    //             stepsDataType = keyToHealthDataType(MOVE_MINUTES)
+    //             aggregatedDataType = keyToHealthDataType(MOVE_MINUTES)
+    //         }
+    //         else -> {
+    //             stepsDataType = keyToHealthDataType(STEPS)
+    //             aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
+    //         }
+    //     }
 
-        val fitnessOptions = FitnessOptions.builder()
-            .addDataType(stepsDataType)
-            .addDataType(aggregatedDataType)
-            .build()
-        val gsa = GoogleSignIn.getAccountForExtension(activity, fitnessOptions)
+    //     val fitnessOptions = FitnessOptions.builder()
+    //         .addDataType(stepsDataType)
+    //         .addDataType(aggregatedDataType)
+    //         .build()
+    //     val gsa = GoogleSignIn.getAccountForExtension(activity, fitnessOptions)
 
-        val duration = (end - start).toInt()
+    //     val duration = (end - start).toInt()
 
-        val ds = DataSource.Builder()
-        .setAppPackageName("com.google.android.gms")
-        .setDataType(stepsDataType)
-        .setType(DataSource.TYPE_DERIVED)
-        .setStreamName("estimated_steps")
-        .build()
+    //     val ds = DataSource.Builder()
+    //     .setAppPackageName("com.google.android.gms")
+    //     .setDataType(stepsDataType)
+    //     .setType(DataSource.TYPE_DERIVED)
+    //     .setStreamName("estimated_steps")
+    //     .build()
 
-        val request = DataReadRequest.Builder()
-        .aggregate(ds)
-            .bucketByTime(duration, TimeUnit.MILLISECONDS)
-            .setTimeRange(start, end, TimeUnit.MILLISECONDS)
-            .build()
+    //     val request = DataReadRequest.Builder()
+    //     .aggregate(ds)
+    //         .bucketByTime(duration, TimeUnit.MILLISECONDS)
+    //         .setTimeRange(start, end, TimeUnit.MILLISECONDS)
+    //         .build()
 
-        Fitness.getHistoryClient(activity, gsa).readData(request)
-            .addOnFailureListener(errHandler(result))
-            .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, aggregatedDataType, result))
+    //     Fitness.getHistoryClient(activity, gsa).readData(request)
+    //         .addOnFailureListener(errHandler(result))
+    //         .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, aggregatedDataType, result))
 
-    }
+    // }
 
     private fun getStepsInRange(start: Long, end: Long, aggregatedDataType: DataType , result: Result) =
         OnSuccessListener { response: DataReadResponse ->
@@ -632,7 +632,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
                     val startDate = Date(startTime)
                     val endDate = Date(dp.getEndTime(TimeUnit.MILLISECONDS))
                     Log.i("FLUTTER_HEALTH::SUCCESS", "returning $count steps for $startDate - $endDate")
-                    map[startTime] = count.asFloat()
+                    map[startTime] = count.asInt()
                 } else {
                     val startDay = Date(start)
                     val endDay = Date(end)
@@ -653,7 +653,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
             "getData" -> getData(call, result)
             "writeData" -> writeData(call, result)
             "getTotalStepsInInterval" -> getTotalStepsInInterval(call, result)
-            "getTotalDataStatisticsInInterval" -> getTotalDataStatisticsInInterval(call, result)
+            // "getTotalDataStatisticsInInterval" -> getTotalDataStatisticsInInterval(call, result)
             "hasPermissions" -> hasPermissions(call, result)
             else -> result.notImplemented()
         }

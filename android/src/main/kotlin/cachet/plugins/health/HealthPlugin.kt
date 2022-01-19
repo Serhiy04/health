@@ -598,10 +598,10 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
         Fitness.getHistoryClient(activity!!.applicationContext, googleSignInAccount)
         .readData(DataReadRequest.Builder()
                 .read(stepsDataType)
-                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                .setTimeRange(start, end, TimeUnit.MILLISECONDS)
                 .build())
-        .addOnSuccessListener (threadPoolExecutor!!, dataHandler(stepsDataType, field, result))
-        .addOnFailureListener(errHandler(result))
+                    .addOnFailureListener(errHandler(result))
+                    .addOnSuccessListener(threadPoolExecutor!!, dataHandler(stepsDataType, field, result))
 
         // val fitnessOptions = FitnessOptions.builder()
         //     .addDataType(stepsDataType)

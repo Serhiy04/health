@@ -590,31 +590,74 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
             }
         }
 
-        val fitnessOptions = FitnessOptions.builder()
-            .addDataType(stepsDataType)
-            .addDataType(aggregatedDataType)
-            .build()
+        val fitnessOptions = FitnessOptions.builder().addDataType(stepsDataType).build()
+
+        val activity = activity ?: return
         val gsa = GoogleSignIn.getAccountForExtension(activity, fitnessOptions)
 
-        val ds = DataSource.Builder()
-            .setAppPackageName("com.google.android.gms")
-            .setDataType(stepsDataType)
-            .setType(DataSource.TYPE_DERIVED)
-            .setStreamName("estimated_steps")
-            .build()
-
-        val duration = (end - start).toInt()
-
         val request = DataReadRequest.Builder()
-            .aggregate(ds)
-            .bucketByTime(duration, TimeUnit.MILLISECONDS)
-            .setTimeRange(start, end, TimeUnit.MILLISECONDS)
-            .build()
+                .setTimeRange(start, end, TimeUnit.MILLISECONDS)
+                .read(stepsDataType)
+                .build()
 
-        Fitness.getHistoryClient(activity, gsa).readData(request)
-            .addOnFailureListener(errHandler(result))
-            .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, aggregatedDataType, result))
+        val response = Fitness.getHistoryClient(activity, gsa).readData(request)
 
+        Thread {
+            try {
+                val readDataResult = Tasks.await(response)
+
+                if (readDataResult.dataSets.isEmpty()) {
+                    activity.runOnUiThread {
+                        result(emptyList(), null)
+                        result.success(emptyList())
+                    }
+                } else {
+                    val dataPoints = mutableListOf<DataPoint>()
+
+                    for (dataSet in readDataResult.dataSets) {
+                        dataPoints.addAll(dataSet.dataPoints)
+                    }
+                    activity.runOnUiThread {
+                        result.success(dataPoints)
+                    }
+                }
+            } catch (e: Throwable) {
+                activity.runOnUiThread {
+                    esult.success(null)
+                }
+            }
+
+        }.start()
+        // val fitnessOptions = FitnessOptions.builder()
+        //     .addDataType(stepsDataType)
+        //     .addDataType(aggregatedDataType)
+        //     .build()
+        // val gsa = GoogleSignIn.getAccountForExtension(activity, fitnessOptions)
+
+        // val duration = (end - start).toInt()
+
+        // val request = DataReadRequest.Builder()
+        //     .setDataType(stepsDataType)
+        //     .bucketByTime(duration, TimeUnit.MILLISECONDS)
+        //     .setTimeRange(start, end, TimeUnit.MILLISECONDS)
+        //     .build()
+
+        // Fitness.getHistoryClient(activity, gsa).readData(request)
+        //     .addOnFailureListener(errHandler(result))
+        //     .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, aggregatedDataType, result))
+
+    }
+
+    private fun createHeartRateSampleMap(
+            millisSinceEpoc: Long,
+            value: Float,
+            sourceApp: String?
+    ): Map<String, Any?> {
+        return mapOf(
+                "timestamp" to millisSinceEpoc,
+                "value" to value.toInt(),
+                "sourceApp" to sourceApp
+        )
     }
 
 

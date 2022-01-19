@@ -326,7 +326,7 @@ class HealthFactory {
   ) async {
     final args = <String, dynamic>{
       'startDate': startDate.millisecondsSinceEpoch,
-      'endDate': endDate.millisecondsSinceEpoch
+      'endDate': endDate.millisecondsSinceEpoch,
     };
     final stepsCount = await _channel.invokeMethod<int?>(
       'getTotalStepsInInterval',
@@ -335,20 +335,11 @@ class HealthFactory {
     return stepsCount;
   }
 
-  // ture<Map<DateTime, int>> getStepsBySegment(int start, int end, int duration, TimeUnit unit) async {
-  //   Map stepsByTimestamp = await _channel
-  //       .invokeMethod("getStepsBySegment", {"start": start, "end": end, "duration": duration, "unit": unit.index});
-  // return stepsByTimestamp.cast<int, int>().map((int key, int value) {
-  //   var dateTime = DateTime.fromMillisecondsSinceEpoch(key);
-  //   dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day); // remove hours, minutes, seconds
-  //   return MapEntry(dateTime, value);
-  // });
-
   Future<int?> getTotalDataStatisticsInInterval(
     DateTime startDate,
-    DateTime endDate,
-    HealthSwiftDataType type,
-  ) async {
+    DateTime endDate, {
+    HealthLibDataType type = HealthLibDataType.steps,
+  }) async {
     final args = <String, dynamic>{
       'startDate': startDate.millisecondsSinceEpoch,
       'endDate': endDate.millisecondsSinceEpoch,
@@ -364,9 +355,9 @@ class HealthFactory {
 
   Future<Map<DateTime, int>?> getTotalDataStatisticsByDateSegments(
     DateTime startDate,
-    DateTime endDate,
-    HealthSwiftDataType type,
-  ) async {
+    DateTime endDate, {
+    HealthLibDataType type = HealthLibDataType.steps,
+  }) async {
     final args = <String, dynamic>{
       'startDate': startDate.millisecondsSinceEpoch,
       'endDate': endDate.millisecondsSinceEpoch,
@@ -386,10 +377,11 @@ class HealthFactory {
   }
 }
 
-enum HealthSwiftDataType {
+enum HealthLibDataType {
   steps,
   heartRate,
   restingHeartRate,
-  distanceWalkingRunning,
+  distance,
+  moveMinutes,
   exerciseTime,
 }

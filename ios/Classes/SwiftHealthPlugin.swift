@@ -393,7 +393,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
             unitType = HKUnit.init(from: "count/min")
             }
-            case "distanceWalkingRunning": 
+            case "distance": 
             if #available(iOS 12.2, *)
             {
             sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
@@ -498,7 +498,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
             unitType = HKUnit.init(from: "count/min")
             }
-            case "distanceWalkingRunning": 
+            case "distance": 
             if #available(iOS 12.2, *)
             {
             sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!

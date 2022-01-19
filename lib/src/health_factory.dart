@@ -344,7 +344,25 @@ class HealthFactory {
   //   return MapEntry(dateTime, value);
   // });
 
-  Future<Map<DateTime, int>?> getTotalStepsStatisticsInInterval(
+  Future<int?> getTotalStepsStatisticsInInterval(
+    DateTime startDate,
+    DateTime endDate,
+    HealthSwiftDataType type,
+  ) async {
+    final args = <String, dynamic>{
+      'startDate': startDate.millisecondsSinceEpoch,
+      'endDate': endDate.millisecondsSinceEpoch,
+      'type': type.name
+    };
+    final quantity = await _channel.invokeMethod<int?>(
+      'getTotalStepsStatisticsInInterval',
+      args,
+    );
+
+    return quantity;
+  }
+
+  Future<Map<DateTime, int>?> getTotalStepsStatisticsByDateSegments(
     DateTime startDate,
     DateTime endDate,
     HealthSwiftDataType type,

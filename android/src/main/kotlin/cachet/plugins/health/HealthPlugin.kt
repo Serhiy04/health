@@ -613,28 +613,9 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
 
         Fitness.getHistoryClient(activity, gsa).readData(request)
             .addOnFailureListener(errHandler(result))
-            .addOnSuccessListener(threadPoolExecutor!!, getDistanceInRange(start, end, aggregatedDataType, result))
+            .addOnSuccessListener(threadPoolExecutor!!, getDistanceInRange(start, end, getStepsInRange, result))
 
     }
-
-    private fun getDistanceInRange(start: Long, end: Long, aggregatedDataType: DataType , result: Result) =
-    OnSuccessListener { response: DataReadResponse ->
-
-        val map = HashMap<Long, Int>() // need to return to Dart so can't use sparse array
-        val dataPoints = mutableListOf<DataPoint>()
-        for (bucket in response.buckets) {
-            for (dataSet in bucket.dataSets) {
-                dataPoints.addAll(dataSet.dataPoints)
-            }
-           
-        }
-
-        assert(map.size <= 1) { "getTotalStepsInInterval should return only one interval. Found: ${map.size}" }
-        activity!!.runOnUiThread {
-            result.success(dataPoints)
-        }
-    }
-
 
     private fun getStepsInRange(start: Long, end: Long, aggregatedDataType: DataType , result: Result) =
         OnSuccessListener { response: DataReadResponse ->
@@ -651,7 +632,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
                     val startDate = Date(startTime)
                     val endDate = Date(dp.getEndTime(TimeUnit.MILLISECONDS))
                     Log.i("FLUTTER_HEALTH::SUCCESS", "returning $count steps for $startDate - $endDate")
-                    map[startTime] = count.asInt()
+                    map[startTime] = count.asFloat()
                 } else {
                     val startDay = Date(start)
                     val endDay = Date(end)

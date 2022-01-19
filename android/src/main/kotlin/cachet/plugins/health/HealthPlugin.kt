@@ -613,7 +613,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
 
         Fitness.getHistoryClient(activity, gsa).readData(request)
             .addOnFailureListener(errHandler(result))
-            .addOnSuccessListener(threadPoolExecutor!!, getDistanceInRange(start, end, getStepsInRange, result))
+            .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, aggregatedDataType, result))
 
     }
 

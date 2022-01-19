@@ -598,8 +598,15 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
 
         val duration = (end - start).toInt()
 
+        val ds = DataSource.Builder()
+        .setAppPackageName("com.google.android.gms")
+        .setDataType(stepsDataType)
+        .setType(DataSource.TYPE_DERIVED)
+        .setStreamName("estimated_steps")
+        .build()
+
         val request = DataReadRequest.Builder()
-            .setDataType(stepsDataType)
+        .aggregate(ds)
             .bucketByTime(duration, TimeUnit.MILLISECONDS)
             .setTimeRange(start, end, TimeUnit.MILLISECONDS)
             .build()

@@ -565,31 +565,35 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
 
         var stepsDataType = keyToHealthDataType(STEPS)
         var aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
-
+        var field = getField("STEPS")
         when(type){
             "steps" -> {
                 stepsDataType = keyToHealthDataType(STEPS)
                 aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
+                field = getField("STEPS")
             }
             "heartRate" -> {
                 stepsDataType = keyToHealthDataType(HEART_RATE)
                 aggregatedDataType = keyToHealthDataType(HEART_RATE)
+                field = getField("HEART_RATE")
             }
             "distance" -> {
                 stepsDataType = keyToHealthDataType(DISTANCE_DELTA)
                 aggregatedDataType = keyToHealthDataType(DISTANCE_DELTA)
+                field = getField("DISTANCE_DELTA")
             }
             "moveMinutes" -> {
                 stepsDataType = keyToHealthDataType(MOVE_MINUTES)
                 aggregatedDataType = keyToHealthDataType(MOVE_MINUTES)
+                field = getField("MOVE_MINUTES")
             }
             else -> {
                 stepsDataType = keyToHealthDataType(STEPS)
                 aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
+                field = getField("STEPS")
             }
         }
 
-        val field = getField(stepsDataType)
         val typesBuilder = FitnessOptions.builder()
         typesBuilder.addDataType(stepsDataType)
         val fitnessOptions = typesBuilder.build()

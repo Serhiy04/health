@@ -550,8 +550,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                 }
         }
         HKHealthStore().execute(query)
-    }
-}
+    }``
     
     func unitLookUp(key: String) -> HKUnit {
         guard let unit = unitDict[key] else {

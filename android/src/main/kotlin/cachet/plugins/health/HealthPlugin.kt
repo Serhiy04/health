@@ -594,23 +594,21 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
             }
         }
 
-        val typesBuilder = FitnessOptions.builder()
-        typesBuilder.addDataType(stepsDataType)
-        val fitnessOptions = typesBuilder.build()
-        val googleSignInAccount = GoogleSignIn.getAccountForExtension(activity!!.applicationContext, fitnessOptions)
-
-        Fitness.getHistoryClient(activity!!.applicationContext, googleSignInAccount)
-        .readData(DataReadRequest.Builder()
-                .read(stepsDataType)
+        val fitnessOptions = FitnessOptions.builder()
+            .addDataType(stepsDataType)
+            .build()
+        val gsa = GoogleSignIn.getAccountForExtension(activity, fitnessOptions)
+        val duration = (end - start).toInt()
+        val request = DataReadRequest.Builder()
+                .bucketByTime(duration, TimeUnit.MILLISECONDS)
                 .setTimeRange(start, end, TimeUnit.MILLISECONDS)
-                .build())
-                    .addOnFailureListener(errHandler(result))
-                    .addOnSuccessListener(threadPoolExecutor!!, dataHandler(stepsDataType, field, result))
+                .read(stepsDataType)
+                .build()
 
-        // val fitnessOptions = FitnessOptions.builder()
-        //     .addDataType(stepsDataType)
-        //     .build()
-        // val gsa = GoogleSignIn.getAccountForExtension(activity, fitnessOptions)
+        Fitness.getHistoryClient(activity, gsa)
+        .readData(request)
+                    .addOnFailureListener(errHandler(result))
+                    .addOnSuccessListener(threadPoolExecutor!!, etStepsInRange(start, end, aggregatedDataType, result))
 
         // val ds = DataSource.Builder()
         //     .setAppPackageName("com.google.android.gms")

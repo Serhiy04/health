@@ -602,7 +602,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
         Fitness.getHistoryClient(activity, gsa)
         .readData(request)
                     .addOnFailureListener(errHandler(result))
-                    .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, aggregatedDataType, result))
+                    .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, stepsDataType, result))
 
         // val ds = DataSource.Builder()
         //     .setAppPackageName("com.google.android.gms")

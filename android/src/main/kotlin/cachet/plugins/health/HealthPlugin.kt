@@ -588,9 +588,8 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
                 aggregatedDataType = keyToHealthDataType(AGGREGATE_STEP_COUNT)
             }
         }
-
+// .addDataType(stepsDataType)
         val fitnessOptions = FitnessOptions.builder()
-            .addDataType(stepsDataType)
             .addDataType(aggregatedDataType)
             .build()
         val gsa = GoogleSignIn.getAccountForExtension(activity, fitnessOptions)

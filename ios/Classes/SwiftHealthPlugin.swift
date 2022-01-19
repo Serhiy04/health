@@ -81,9 +81,9 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             getTotalStepsInInterval(call: call, result: result)
         }
 
-        /// Handle getTotalStepsStatisticsInInterval
-        else if (call.method.elementsEqual("getTotalStepsStatisticsInInterval")){
-            getTotalStepsStatisticsInInterval(call: call, result: result)
+        /// Handle getTotalDataStatisticsInInterval
+        else if (call.method.elementsEqual("getTotalDataStatisticsInInterval")){
+            getTotalDataStatisticsInInterval(call: call, result: result)
         }
 
         /// Handle writeData
@@ -343,7 +343,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         HKHealthStore().execute(query)
     }
     
-    func getTotalStepsStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult) {
+    func getTotalDataStatisticsInInterval(call: FlutterMethodCall, result: @escaping FlutterResult) {
         if #available(iOS 12.0, *)
         {
         let arguments = call.arguments as? NSDictionary

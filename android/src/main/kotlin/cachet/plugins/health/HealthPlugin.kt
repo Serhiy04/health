@@ -45,6 +45,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
     private var WEIGHT = "WEIGHT"
     private var STEPS = "STEPS"
     private var AGGREGATE_STEP_COUNT = "AGGREGATE_STEP_COUNT"
+    private var AGGREGATE_DISTANCE_DELTA = "AGGREGATE_DISTANCE_DELTA"
     private var ACTIVE_ENERGY_BURNED = "ACTIVE_ENERGY_BURNED"
     private var HEART_RATE = "HEART_RATE"
     private var BODY_TEMPERATURE = "BODY_TEMPERATURE"
@@ -152,6 +153,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
             WEIGHT -> DataType.TYPE_WEIGHT
             STEPS -> DataType.TYPE_STEP_COUNT_DELTA
             AGGREGATE_STEP_COUNT -> DataType.AGGREGATE_STEP_COUNT_DELTA
+            AGGREGATE_DISTANCE_DELTA -> DataType.AGGREGATE_DISTANCE_DELTA
             ACTIVE_ENERGY_BURNED -> DataType.TYPE_CALORIES_EXPENDED
             HEART_RATE -> DataType.TYPE_HEART_RATE_BPM
             BODY_TEMPERATURE -> HealthDataTypes.TYPE_BODY_TEMPERATURE
@@ -576,7 +578,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
             }
             "distance" -> {
                 stepsDataType = keyToHealthDataType(DISTANCE_DELTA)
-                aggregatedDataType = keyToHealthDataType(DISTANCE_DELTA)
+                aggregatedDataType = keyToHealthDataType(AGGREGATE_DISTANCE_DELTA)
             }
             "moveMinutes" -> {
                 stepsDataType = keyToHealthDataType(MOVE_MINUTES)
@@ -590,38 +592,28 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
 
         val fitnessOptions = FitnessOptions.builder()
             .addDataType(stepsDataType)
+            .addDataType(aggregatedDataType)
             .build()
         val gsa = GoogleSignIn.getAccountForExtension(activity, fitnessOptions)
+
+        val ds = DataSource.Builder()
+            .setAppPackageName("com.google.android.gms")
+            .setDataType(stepsDataType)
+            .setType(DataSource.TYPE_DERIVED)
+            .setStreamName("estimated_steps")
+            .build()
+
         val duration = (end - start).toInt()
+
         val request = DataReadRequest.Builder()
-                .bucketByTime(duration, TimeUnit.MILLISECONDS)
-                .setTimeRange(start, end, TimeUnit.MILLISECONDS)
-                .read(stepsDataType)
-                .build()
+            .aggregate(ds)
+            .bucketByTime(duration, TimeUnit.MILLISECONDS)
+            .setTimeRange(start, end, TimeUnit.MILLISECONDS)
+            .build()
 
-        Fitness.getHistoryClient(activity, gsa)
-        .readData(request)
-                    .addOnFailureListener(errHandler(result))
-                    .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, stepsDataType, result))
-
-        // val ds = DataSource.Builder()
-        //     .setAppPackageName("com.google.android.gms")
-        //     .setDataType(stepsDataType)
-        //     .setType(DataSource.TYPE_DERIVED)
-        //     .setStreamName("estimated_steps")
-        //     .build()
-
-        // val duration = (end - start).toInt()
-
-        // val request = DataReadRequest.Builder()
-        //         .bucketByTime(duration, TimeUnit.MILLISECONDS)
-        //         .setTimeRange(start, end, TimeUnit.MILLISECONDS)
-        //         .read(stepsDataType)
-        //         .build()
-
-        // Fitness.getHistoryClient(activity, gsa).readData(request)
-        //     .addOnFailureListener(errHandler(result))
-            // .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, aggregatedDataType, result))
+        Fitness.getHistoryClient(activity, gsa).readData(request)
+            .addOnFailureListener(errHandler(result))
+            .addOnSuccessListener(threadPoolExecutor!!, getStepsInRange(start, end, aggregatedDataType, result))
 
     }
 

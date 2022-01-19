@@ -605,10 +605,11 @@ class HealthPlugin(private var channel: MethodChannel? = null) : MethodCallHandl
 
         // val request = DataReadRequest.Builder()
         //     .aggregate(ds)
-        //     .bucketByTime(duration, TimeUnit.MILLISECONDS)
-        //     .setTimeRange(start, end, TimeUnit.MILLISECONDS)
+            // .bucketByTime(duration, TimeUnit.MILLISECONDS)
+            // .setTimeRange(start, end, TimeUnit.MILLISECONDS)
         //     .build()
         val request = DataReadRequest.Builder()
+                .bucketByTime(duration, TimeUnit.MILLISECONDS)
                 .setTimeRange(start, end, TimeUnit.MILLISECONDS)
                 .read(stepsDataType)
                 .build()

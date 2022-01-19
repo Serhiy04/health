@@ -335,7 +335,7 @@ class HealthFactory {
     return stepsCount;
   }
 
-  Future<int?> getTotalDataStatisticsInInterval(
+  Future<List<dynamic>?> getTotalDataStatisticsInInterval(
     DateTime startDate,
     DateTime endDate, {
     HealthLibDataType type = HealthLibDataType.steps,
@@ -345,7 +345,7 @@ class HealthFactory {
       'endDate': endDate.millisecondsSinceEpoch,
       'type': type.name
     };
-    final quantity = await _channel.invokeMethod<int?>(
+    final quantity = await _channel.invokeMethod<List<dynamic>>(
       'getTotalDataStatisticsInInterval',
       args,
     );

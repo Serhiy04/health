@@ -520,7 +520,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             case "standTime": 
             if #available(iOS 13.0, *)
             {
-            sampleType = HKQuantityType.quantityType(forIdentifier: .appleStandTime)!
+            sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.appleStandTime)!
             unitType = HKUnit.minute()
             }
             default:

@@ -380,8 +380,15 @@ class HealthFactory {
 enum HealthLibDataType {
   steps,
   heartRate,
+
+  ///Only For Ios
   restingHeartRate,
   distance,
   moveMinutes,
+
+  ///Only For Ios
   exerciseTime,
+
+  ///Only For Ios
+  standTime,
 }

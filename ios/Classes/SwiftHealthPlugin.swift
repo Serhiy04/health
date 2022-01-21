@@ -46,6 +46,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     let SLEEP_ASLEEP = "SLEEP_ASLEEP"
     let SLEEP_AWAKE = "SLEEP_AWAKE"
     let EXERCISE_TIME = "EXERCISE_TIME"
+    let STAND_TIME = "STAND_TIME"
     let WORKOUT = "WORKOUT"
 
     struct PluginError: Error {
@@ -510,6 +511,12 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             sampleType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime)!
             unitType = HKUnit.minute()
             }
+            case "standTime": 
+            if #available(iOS 12.2, *)
+            {
+            sampleType = HKQuantityType.quantityType(forIdentifier: .appleStandTime)!
+            unitType = HKUnit.minute()
+            }
             default:
             sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
             unitType = HKUnit.count()
@@ -599,6 +606,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         unitDict[SLEEP_ASLEEP] = HKUnit.init(from: "")
         unitDict[SLEEP_AWAKE] = HKUnit.init(from: "")
         unitDict[EXERCISE_TIME] =  HKUnit.minute()
+        unitDict[STAND_TIME] =  HKUnit.minute()
         unitDict[WORKOUT] = HKUnit.init(from: "")
 
         // Set up iOS 11 specific types (ordinary health data types)
@@ -634,6 +642,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             dataTypesDict[SLEEP_ASLEEP] = HKSampleType.categoryType(forIdentifier: .sleepAnalysis)!
             dataTypesDict[SLEEP_AWAKE] = HKSampleType.categoryType(forIdentifier: .sleepAnalysis)!
             dataTypesDict[EXERCISE_TIME] = HKSampleType.quantityType(forIdentifier: .appleExerciseTime)!
+            dataTypesDict[STAND_TIME] = HKSampleType.quantityType(forIdentifier: .appleStandTime)!
             dataTypesDict[WORKOUT] = HKSampleType.workoutType()
 
             healthDataTypes = Array(dataTypesDict.values)

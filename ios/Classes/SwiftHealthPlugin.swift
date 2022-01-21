@@ -377,41 +377,41 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         var unitType = HKUnit.count()
         switch type {
             case "steps": 
-            if #available(iOS 12.2, *)
-            {
+          //  if #available(iOS 12.2, *)
+           // {
             sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
             unitType = HKUnit.count()
-            }   
+          //  }   
             case "heartRate": 
-            if #available(iOS 12.2, *)
-            {
+           // if #available(iOS 12.2, *)
+          //  {
             sampleType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
             unitType = HKUnit.init(from: "count/min")
-            }
+          //  }
             case "restingHeartRate": 
-            if #available(iOS 12.2, *)
-            {
+           // if #available(iOS 12.2, *)
+           // {
             sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
             unitType = HKUnit.init(from: "count/min")
-            }
+            //}
             case "distance": 
-            if #available(iOS 12.2, *)
-            {
+            //if #available(iOS 12.2, *)
+           // {
             sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
             unitType = HKUnit.meter()
-            }
+           // }
             case "exerciseTime": 
-            if #available(iOS 12.2, *)
-            {
+           // if #available(iOS 12.2, *)
+           // {
             sampleType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime)!
             unitType = HKUnit.minute()
-            }
+           // }
             case "standTime": 
-            if #available(iOS 13.0, *)
-            {
+          //  if #available(iOS 13.0, *)
+          //  {
             sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.appleStandTime)!
             unitType = HKUnit.minute()
-            }
+          //  }
             default:
             sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
             unitType = HKUnit.count()
@@ -488,41 +488,41 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         var unitType = HKUnit.count()
         switch type {
             case "steps": 
-            if #available(iOS 12.2, *)
-            {
+          //  if #available(iOS 12.2, *)
+          //  {
             sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!  
             unitType = HKUnit.count()
-            }   
+          //  }   
             case "heartRate": 
-            if #available(iOS 12.2, *)
-            {
+          //  if #available(iOS 12.2, *)
+          //  {
             sampleType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
             unitType = HKUnit.init(from: "count/min")
-            }
+         //   }
             case "restingHeartRate": 
-            if #available(iOS 12.2, *)
-            {
+         //   if #available(iOS 12.2, *)
+         //   {
             sampleType = HKQuantityType.quantityType(forIdentifier: .restingHeartRate)!
             unitType = HKUnit.init(from: "count/min")
-            }
+           // }
             case "distance": 
-            if #available(iOS 12.2, *)
-            {
+          //  if #available(iOS 12.2, *)
+         //   {
             sampleType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
             unitType = HKUnit.meter()
-            }
+           // }
             case "exerciseTime": 
-            if #available(iOS 12.2, *)
-            {
+          //  if #available(iOS 12.2, *)
+         //   {
             sampleType = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime)!
             unitType = HKUnit.minute()
-            }
+         //   }
             case "standTime": 
-            if #available(iOS 13.0, *)
-            {
+        //    if #available(iOS 13.0, *)
+         //   {
             sampleType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.appleStandTime)!
             unitType = HKUnit.minute()
-            }
+         //   }
             default:
             sampleType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
             unitType = HKUnit.count()

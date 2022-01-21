@@ -421,7 +421,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         let predicate = HKQuery.predicateForSamples(withStart: dateFrom, end: dateTo, options: .strictStartDate)
 
         let query = HKStatisticsCollectionQuery(quantityType: sampleType,
-            quantitySamplePredicate: nil,
+            quantitySamplePredicate: predicate,
             options: type == "restingHeartRate" || type == "heartRate" ? .discreteMostRecent : .cumulativeSum, anchorDate: anchorDate, intervalComponents: interval)
 
         query.initialResultsHandler = { query, results, error in
@@ -436,13 +436,13 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                 if let quantity = statistics.sumQuantity() {
                 let unit = unitType
                 let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
-                var steps = quantity.doubleValue(for: unit)
+                let steps = quantity.doubleValue(for: unit)
                 let totalSteps = Int(steps)
                 dic[timestamp] = totalSteps
                 }
                 else {
                 let timestamp = Int(statistics.startDate.timeIntervalSince1970 * 1000)
-                var steps = 0.0
+                let steps = 0.0
                 let totalSteps = Int(steps)
                 dic[timestamp] = totalSteps
                 }
@@ -546,7 +546,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
             to: dateTo) { statistics, _ in
                 if let sumQuantity = statistics.sumQuantity() {
                 let unit = unitType
-                var data = sumQuantity.doubleValue(for: unit)
+                let data = sumQuantity.doubleValue(for: unit)
                 quantity += data
                 }
                 else {
